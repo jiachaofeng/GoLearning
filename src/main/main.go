@@ -31,8 +31,6 @@ func main() {
 	startTime := time.Now()
 	log.Println("App start： ", startTime.String())
 
-	// util.CopyFiles("H:/Invoice file/Invoice file/","../../bin/NewDir/")
-	// util.CopyFiles("../../bin/NewDir/"，"H:/Invoice file/Invoice file/")
 	util.CopyFiles(*srcFolder, *tarFolder, timeStart, timeEnd)
 	elapsed := time.Since(startTime)
 	log.Println("App elapsed: ", elapsed)
