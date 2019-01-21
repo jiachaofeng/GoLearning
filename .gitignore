@@ -1,4 +1,4 @@
-.vscode/settings.json
+.vscode/*
 src/main/application.log
 deploy.bat
-pkg/
+pkg/*

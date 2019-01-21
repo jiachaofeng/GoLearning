@@ -51,7 +51,7 @@ func CopyFiles(filepathOrigin, filepathDest string, timeStart, timeEnd time.Time
 				month := strconv.Itoa(int(modTime.Month()))
 				destDir := filepathDest + "/" + year + "/" + month + "/"
 				destFileName := destDir + fileName
-				exist,_ := PathExists(destFileName)
+				exist, _ := PathExists(destFileName)
 				if exist {
 					log.Println("File exist, will skip this folder copied " + destDir)
 					return filepath.SkipDir
@@ -61,10 +61,10 @@ func CopyFiles(filepathOrigin, filepathDest string, timeStart, timeEnd time.Time
 				// err = Copy(pathName,destFileName)
 				//Need to keep file createtime and modified time
 				err = Link(pathName, destFileName)
-				
+
 				if err != nil {
 					log.Println(err)
-				}else{
+				} else {
 					RemoveFile(pathName)
 				}
 			}
@@ -109,7 +109,7 @@ func RemoveFile(filepath string) error {
 		return err
 	}
 
-	err = os.Remove(filepath)
+	err = os.RemoveAll(filepath)
 
 	return err
 }
@@ -124,45 +124,45 @@ func FormatPath(filepath string) string {
 }
 
 //ZipFile to zip file to target path
-func ZipFile(source, target string) error{
+func ZipFile(source, target string) error {
 
-    zipFile , err := os.Create(target)
+	zipFile, err := os.Create(target)
 
-    if err != nil {
-        log.Println(err)
-        return err
-    }
-    defer zipFile.Close()
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer zipFile.Close()
 
-    archive := zip.NewWriter(zipFile)
+	archive := zip.NewWriter(zipFile)
 
-    defer archive.Close()
+	defer archive.Close()
 
-    return filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
 
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 
-        header, err := zip.FileInfoHeader(info)
+		header, err := zip.FileInfoHeader(info)
 
-        if err != nil{
-            return err
-        }
+		if err != nil {
+			return err
+		}
 
-        header.SetModTime(time.Unix(info.ModTime().Unix(), 0))
+		header.SetModTime(time.Unix(info.ModTime().Unix(), 0))
 
 		if info.IsDir() {
 			return nil
-		} 
-		
+		}
+
 		header.Name = path[len(source):len(path)]
 		header.Method = zip.Deflate
 
-        writer, err := archive.CreateHeader(header)
-        if err != nil {
-            return err
-        }
+		writer, err := archive.CreateHeader(header)
+		if err != nil {
+			return err
+		}
 
 		file, err := os.Open(path)
 		if err != nil {
@@ -170,7 +170,7 @@ func ZipFile(source, target string) error{
 		}
 		defer file.Close()
 		_, err = io.Copy(writer, file)
-		
-        return err
-    })
+
+		return err
+	})
 }

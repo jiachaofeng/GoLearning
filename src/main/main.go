@@ -65,7 +65,7 @@ func initLog() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
-func initFolder(destPath string, timeStart time.Time, timeEnd time.Time) {
+func initFolder(destPath string, timeStart, timeEnd time.Time) {
 	var year, month string
 	for {
 		year = strconv.Itoa(timeStart.Year())
@@ -80,18 +80,21 @@ func initFolder(destPath string, timeStart time.Time, timeEnd time.Time) {
 	}
 }
 
-func zippedFiles(destPath string, timeStart time.Time, timeEnd time.Time) {
+func zippedFiles(destPath string, timeStart, timeEnd time.Time) {
 	var year, month string
 	for {
 		timeEnd = timeEnd.AddDate(0, -1, 0)
-		if timeStart.Before(timeEnd) {
-			break
-		}
 
 		year = strconv.Itoa(timeEnd.Year())
 		month = strconv.Itoa(int(timeEnd.Month()))
-		source := util.FormatPath(destPath) + "/" + year + "/" + month + "/"
+		source := util.FormatPath(destPath) + "/" + year + "/" + month
 		dest := util.FormatPath(destPath) + "/" + year + "/" + month + ".zip"
+		log.Println("ZipFile() ", source, dest)
 		util.ZipFile(source, dest)
+		util.RemoveFile(source)
+
+		if timeStart.Before(timeEnd) {
+			break
+		}
 	}
 }
